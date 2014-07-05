@@ -178,6 +178,19 @@ SoonTS6.Server = function (options) {
         this.identify = function(nick, account) {
             self.send('ENCAP * SU ' + nick + ' ' + (account || ''));
         };
+        /**
+         * Forcibly changes the nick of an user.
+         *
+         * @param {string} nick - The current nick.
+         * @param {string} newnick - The new nick.
+         */
+        this.rsfnc = function(nick, newnick) {
+            var uid = self.objs.findByAttr('name', nick).id;
+            var server = self.objs.findByAttr('id', uid.slice(0, 3)).name;
+            var ts = self.objs.findByAttr('name', nick).ts;
+            var oldts = ts - 60;
+            self.send('ENCAP ' + server + ' RSFNC ' + nick + ' ' + newnick + ' ' + oldts + ' ' + ts);
+        }
     };
     /**
      * Register a new service.
