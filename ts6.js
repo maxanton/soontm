@@ -269,6 +269,20 @@ SoonTS6.Server = function (options) {
             }
             self.emit('privmsg', from, target, line.args[1]);
         }
+        if (line.command === 'WHOIS') {
+            var id = line.id;
+            var target = line.args[0];
+            var targetobj = self.objs.findByAttr('id', target);
+            if (!targetobj) {
+                self.send('401 ' + id + ' * :No such nick/channel');
+                self.send('318 ' + id + ' * :End of WHOIS');
+                return;
+            }
+            self.send('311 ' + id + ' ' + targetobj.name + ' ' + targetobj.ident + ' ' + targetobj.host + ' * :' + targetobj.desc);
+            self.send('312 ' + id + ' ' + targetobj.name + ' ' + options.sname + ' :soontm/ts6 IRC services');
+            self.send('313 ' + id + ' ' + targetobj.name + ' ' + ':is a Network Service');
+            self.send('318 ' + id + ' ' + targetobj.name + ' ' + ':End of WHOIS');
+        }
         return;
     });
     this.send('PASS ' + options.pass + ' TS 6 :' + options.sid);
